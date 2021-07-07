@@ -11,3 +11,19 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.arrow {
+  pointer-events: none;
+}
+ 
+.arrow__path {
+  stroke: black;
+  fill: transparent;
+  stroke-width: 2;
+}
+ 
+.arrow__head line {
+  stroke: lightblue;
+  fill: lightblue;
+  stroke-width: 2;
+}

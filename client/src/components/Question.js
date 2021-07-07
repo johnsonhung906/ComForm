@@ -11,6 +11,8 @@ import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CloseIcon from '@material-ui/icons/Close';
 import DeleteOutlineRoundedIcon from '@material-ui/icons/DeleteOutlineRounded';
+import ShuffleIcon from '@material-ui/icons/Shuffle';
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 
 const useStyles = makeStyles(theme => ({
   numberbox: {
@@ -54,36 +56,54 @@ const useStyles = makeStyles(theme => ({
 }))
 
 function Question(props){
-    const {number, box, setBox, handleDeleteQues}  = props
+    const {number, boxes, setBoxes, handleDeleteQues, idx}  = props
     const classes = useStyles();
-    // const [title, setTitle] = useState(box[number].title);
-    // const [questype, setQes] = useState('Multiple choice');
     const questypes = [
         {name: 'Multiple choice',
          icon: <RadioButtonCheckedIcon/> 
         },
         {name: 'Checked box',
          icon: <CheckBoxIcon/> 
+        },
+        {name: 'Condition box',
+        icon: <ShuffleIcon/> 
         }
     ]
 
     const ChangeTitle = (e) => {
-        let new_box = [...box]
-        new_box[number].title = e.target.value
-        setBox(new_box)
+        let new_boxes = [...boxes]
+        new_boxes[idx].problems[number].title = e.target.value
+        setBoxes(new_boxes)
     }
 
     const handleChange = (e) => {
-        let new_box = [...box]
-        new_box[number].type = e.target.value
-        setBox(new_box)
+        let new_boxes = [...boxes]
+        //console.log(e.target.value)
+        //can only have one condition box for any group
+        if(new_boxes[idx].hasCon){
+            if(new_boxes[idx].problems[number].type === 'Condition box' && e.target.value !== 'Condition box'){
+                new_boxes[idx].problems[number].type = e.target.value
+                new_boxes[idx].hasCon = false
+                setBoxes(new_boxes)
+            }
+            else if(new_boxes[idx].problems[number].type !== 'Condition box' && e.target.value !== 'Condition box'){
+                new_boxes[idx].problems[number].type = e.target.value
+                setBoxes(new_boxes)
+            }
+        }
+        else{
+            new_boxes[idx].problems[number].type = e.target.value
+            if(e.target.value === 'Condition box') new_boxes[idx].hasCon = true
+            setBoxes(new_boxes)
+        }
     }
 
     const handleAddOption = (e) => {
         if(e.target.value !== ''){
-            let new_box = [...box]
-            new_box[number].options.push(e.target.value)
-            setBox(new_box)
+            let new_boxes = [...boxes]
+            new_boxes[idx].problems[number].options.push(e.target.value)
+            new_boxes[idx].problems[number].to.push('')
+            setBoxes(new_boxes)
         }
         e.target.value = ''
     }
@@ -94,25 +114,41 @@ function Question(props){
     }
 
     const handleDelete = (key) => {
-        let new_box = [...box]
-        new_box[number].options.splice(key, 1)
-        setBox(new_box)
+        let new_boxes = [...boxes]
+        new_boxes[idx].problems[number].options.splice(key, 1)
+        setBoxes(new_boxes)
     }
 
     const Changechoice = (e, num) =>{
-        let new_box = [...box]
-        new_box[number].options[num] = e.target.value
-        setBox(new_box)
+        let new_boxes = [...boxes]
+        new_boxes[idx].problems[number].options[num] = e.target.value
+        setBoxes(new_boxes)
+    }
+
+    const Find_GroupName = (id) => {
+        for (let i = 0; i < boxes.length; i++){
+            if (boxes[i].id === id) {
+                return boxes[i].group_title
+            }
+        }
     }
 
     const ButtonChoice = () =>{
-        switch(box[number].type){
+        switch(boxes[idx].problems[number].type){
             case 'Multiple choice':
                 return <RadioButtonUncheckedIcon/>
             case 'Checked box':
                 return <CheckBoxOutlineBlankIcon/>
+            case 'Condition box':
+                return <ShuffleIcon/>
         }
         return <CheckBoxOutlineBlankIcon/>
+    }
+
+    const handleChangeTo = (e, num) =>{
+        let new_boxes = [...boxes]
+        new_boxes[idx].problems[number].to[num] = e.target.value
+        setBoxes(new_boxes)
     }
     
     return(
@@ -125,7 +161,7 @@ function Question(props){
             <TextField 
                 fullWidth
                 id={number+'-'+'title'} 
-                value={box[number].title} 
+                value={boxes[idx].problems[number].title} 
                 className={classes.title}
                 InputProps={{
                     classes: {
@@ -140,7 +176,7 @@ function Question(props){
                 <Select
                     labelId="demo-simple-select-label"
                     id={number+'-'+'select'} 
-                    value={box[number].type}
+                    value={boxes[idx].problems[number].type}
                     onChange={handleChange}
                 >
                     {questypes.map((ques) => (
@@ -156,7 +192,7 @@ function Question(props){
         </div>
         
         <div>
-            {box[number].options.map((choice, num) => (
+            {boxes[idx].problems[number].options.map((choice, num) => (
                 <div key={num}> 
                     <div style={{float: "left", marginTop:"5px"}}>
                         {ButtonChoice(num)}
@@ -173,6 +209,31 @@ function Question(props){
                             onChange={(e) => Changechoice(e, num)}
                         />
                     </div>
+                    {boxes[idx].problems[number].type === 'Condition box'? 
+                    <>   
+                        <div style={{float: "left"}}>
+                            <div style={{float: "left", marginTop:"5px"}}>
+                                <ArrowForwardIcon/>
+                            </div>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id={number+'-'+'select'} 
+                                value={boxes[idx].problems[number].to[num]}
+                                onChange={(e) => handleChangeTo(e, num)}
+                            >
+                                {boxes.map((box, key) => (
+                                    key===idx? "":
+                                    <MenuItem key={'to'+'-'+key} value={box.id}>
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <div style={{ marginLeft:'10px'}}>{Find_GroupName(box.id)}</div>
+                                        </div>
+                                    </MenuItem>
+                                ))}   
+                            </Select>
+                        </div>
+                    </>
+                    : ""
+                    }
                     <div style={{float: "left", marginLeft: "10px", marginTop:"7px"}} onClick={() => handleDelete(num)}>
                         <CloseIcon/>
                     </div>

@@ -9,6 +9,10 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import TextField from '@material-ui/core/TextField';
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import { green } from '@material-ui/core/colors';
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -22,22 +26,47 @@ const useStyles = makeStyles(theme => ({
 
 function Group(props){
     const classes = useStyles();
-    const {open, handleClose, box, setBox} = props;
+    const {open, handleClose, boxes, setBoxes, idx} = props;
+    //has condition box or not
 
     const handleDeleteQues = (num) => {
-        let new_box = [...box]
-        new_box.splice(num, 1)
-        setBox(new_box)
+        let new_boxes = [...boxes]
+        if(new_boxes[idx].problems[num].type === 'Condition box'){
+            new_boxes[idx].hasCon = false
+        }
+        new_boxes[idx].problems.splice(num, 1)
+        setBoxes(new_boxes)
     }
 
     const handleAdd = () => {
-        let new_box = [...box]
-        new_box.push({
-            title: 'Problem'+(new_box.length+1),  
+        let new_boxes = [...boxes]
+        new_boxes[idx].problems.push({
+            title: 'Problem'+(new_boxes[idx].problems.length+1),  
             type: 'Multiple choice',
-            options:[]
+            options:[],
+            to:[]
         })
-        setBox(new_box)
+        setBoxes(new_boxes)
+    }
+
+    const changeGroupTitle = (e) =>{
+        let new_boxes = [...boxes]
+        new_boxes[idx].group_title = e.target.value
+        setBoxes(new_boxes)
+    }
+
+    const Find_GroupName = (id) => {
+        for (let i = 0; i < boxes.length; i++){
+            if (boxes[i].id === id) {
+                return boxes[i].group_title
+            }
+        }
+    }
+
+    const handleChangeTo = (e) =>{
+        let new_boxes = [...boxes]
+        new_boxes[idx].to = e.target.value
+        setBoxes(new_boxes)
     }
 
     return(
@@ -47,22 +76,54 @@ function Group(props){
                 id="standard-search" 
                 label="Problem Group Name" 
                 type="search" 
-                defaultValue="Untitled Group" 
+                value = {boxes[idx].group_title}
                 className={classes.title}
                 InputProps={{
                     classes: {
                       input: classes.resize,
                     },
                 }}
+                onChange={changeGroupTitle}
             />
         </DialogTitle>
         <DialogContent style={{fontSize: 14}}>
           
         <br/>
-        {box.map((question, number) => (<Question number={number} box={box} setBox={setBox} key={number} handleDeleteQues={handleDeleteQues}/>))}
-        <Button onClick={handleAdd} color="primary">
-            <LibraryAddIcon color="primary"/>
-        </Button>
+        {boxes[idx].problems.map((question, number) => 
+        (<Question  number={number} 
+                    boxes={boxes} 
+                    setBoxes={setBoxes} 
+                    key={number} 
+                    handleDeleteQues={handleDeleteQues} 
+                    idx={idx}
+        />))}
+        <div style={{float: "left"}}>
+            <Button onClick={handleAdd} color="primary">
+                <LibraryAddIcon color="primary"/>
+            </Button>
+        </div>
+        {boxes[idx].hasCon? "": 
+            <div style={{float: "left"}}>
+                <div style={{float: "left", marginTop:"5px", marginLeft: "10px"}}>
+                    <ArrowForwardIcon color="primary"/>
+                </div>
+                <Select
+                    labelId="demo-simple-select-label"
+                    id='select' 
+                    value={boxes[idx].to}
+                    onChange={(e) => handleChangeTo(e)}
+                >
+                    {boxes.map((box, key) => (
+                        key === idx ? "":
+                        <MenuItem key={'to'+'-'+key} value={box.id}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <div style={{ marginLeft:'10px'}}>{Find_GroupName(box.id)}</div>
+                            </div>
+                        </MenuItem>
+                    ))}   
+                </Select>
+            </div>
+        }
         <DialogActions>
             <Button onClick={handleClose} color="primary">
                 Save
