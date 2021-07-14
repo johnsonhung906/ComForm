@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 import Line from './Line'
 // Line <from to/>
 
@@ -7,9 +7,11 @@ function ConMatch({box, k}){
         if(box.problems[i].type === 'Condition box'){
             return(
                 <>
-                    {box.problems[i].to.map((to, idx) => 
-                        <Line from={box.id} to={to} key={k+'-'+idx}/>
-                    )}
+                    {box.problems[i].to.map((to, idx) => (
+                        (to && box.id) ?
+                        <Line from={box.id} to={to} key={k+'-'+idx}/>:
+                        ""
+                    ))}
                 </>
             )
         }
@@ -21,7 +23,7 @@ function Connect({box, k}){
     return(
         <>
             {box.hasCon ? <div><ConMatch box={box} key={k}/></div>:
-                <div>{box.to === ''? "": <Line from={box.id} to={box.to} k={k}/>}</div>
+                <div>{(box.to && box.id) ? <Line from={box.id} to={box.to} k={k}/>: ""}</div>
             }
         </>  
     )

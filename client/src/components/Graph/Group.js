@@ -1,5 +1,4 @@
-import React, {useState, useEffect} from 'react'
-import useWindowDimensions from './hooks/useWindowDimensions';
+import React from 'react'
 import Question from './Question';
 import { makeStyles } from '@material-ui/styles'
 import Button from '@material-ui/core/Button';
@@ -11,13 +10,17 @@ import TextField from '@material-ui/core/TextField';
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import { green } from '@material-ui/core/colors';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 
 const useStyles = makeStyles(theme => ({
   title: {
-    width:"100%",
+    width:"30%",
     fontSize:"300px"
+  },
+  description:{
+    width:"90%",
+    fontSize:"300px",
+    marginTop: "10px"
   },
   resize:{
     fontSize:20
@@ -69,6 +72,13 @@ function Group(props){
         setBoxes(new_boxes)
     }
 
+    const changeDescription = (e) =>{
+        let new_boxes = [...boxes]
+        new_boxes[idx].description = e.target.value
+        setBoxes(new_boxes)
+    }
+
+
     return(
     <Dialog fullWidth  maxWidth='lg' open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
         <DialogTitle id="dialog-title">
@@ -85,9 +95,15 @@ function Group(props){
                 }}
                 onChange={changeGroupTitle}
             />
+            <TextField 
+                id="standard-description" 
+                label="Group Description" 
+                value = {boxes[idx].description}
+                className={classes.description}
+                onChange={changeDescription}
+            />
         </DialogTitle>
         <DialogContent style={{fontSize: 14}}>
-          
         <br/>
         {boxes[idx].problems.map((question, number) => 
         (<Question  number={number} 

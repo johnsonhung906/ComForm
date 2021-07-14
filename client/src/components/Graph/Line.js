@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 import Arrow, { DIRECTION, HEAD} from 'react-arrows'
 
 
@@ -15,12 +15,12 @@ function Line(props){
         from={{
             direction: DIRECTION.RIGHT,
             node: () => document.getElementById(from),
-            translation: [1, 0],
+            translation: [0.6, 0],
         }}
         to={{
             direction: DIRECTION.LEFT,
             node: () => document.getElementById(to),
-            translation: [-1, 0],
+            translation: [-0.6, 0],
         }}
         head = {HEAD.NORMAL}
         />

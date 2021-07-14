@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 import { makeStyles } from '@material-ui/styles'
 import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
@@ -13,6 +13,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import DeleteOutlineRoundedIcon from '@material-ui/icons/DeleteOutlineRounded';
 import ShuffleIcon from '@material-ui/icons/Shuffle';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import ErrorIcon from '@material-ui/icons/Error';
 
 const useStyles = makeStyles(theme => ({
   numberbox: {
@@ -110,12 +111,13 @@ function Question(props){
 
     const handleAddChange = (e) => {
         const key = e.which || e.keyCode
-        if(key == 13){handleAddOption(e)}
+        if(key === 13){handleAddOption(e)}
     }
 
     const handleDelete = (key) => {
         let new_boxes = [...boxes]
         new_boxes[idx].problems[number].options.splice(key, 1)
+        new_boxes[idx].problems[number].to.splice(key, 1)
         setBoxes(new_boxes)
     }
 
@@ -141,8 +143,9 @@ function Question(props){
                 return <CheckBoxOutlineBlankIcon/>
             case 'Condition box':
                 return <ShuffleIcon/>
+            default:
+                return <ErrorIcon/>
         }
-        return <CheckBoxOutlineBlankIcon/>
     }
 
     const handleChangeTo = (e, num) =>{
