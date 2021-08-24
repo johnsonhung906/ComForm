@@ -9,9 +9,9 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import Box from '@material-ui/core/Box';
-import FormCard from './FormCard';
-import addpic from '../bgpic/addpic.png';
-import Rename from './Rename'
+import FormCard from '../components/home/FormCard';
+import addpic from '../components/bgpic/addpic.png';
+import Rename from '../components/home/Rename'
 
 let ini_forms = [
 {
@@ -63,11 +63,13 @@ const useStyles = makeStyles({
 });
 
 function Home(props){
+    const classes = useStyles();
+    const savedUser = JSON.parse(localStorage.getItem('LOCALSTORAGE_USER'))
+    console.log(savedUser)
     const [forms, setForms] = useState(ini_forms)
     const [opRename, setOpen] = useState(false)
     const [renameIdx, setIdx] = useState(-1)
-    const classes = useStyles();
-
+    
     const handleAdd = () => {
         let new_forms = [...forms]
         new_forms.push({
@@ -96,7 +98,6 @@ function Home(props){
     return (
         <>
         <div style={{height: "50px"}}>
-            
         </div>
         <Divider/>
         <Rename open={opRename} setOpen={setOpen} idx={renameIdx} forms={forms} handleRename={handleRename}/>

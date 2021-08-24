@@ -68,6 +68,7 @@ function Rename(props){
             <TextField 
                 id="standard-description" 
                 label="Form Description" 
+                multiline
                 value = {forms[idx].description}
                 className={classes.description}
                 onChange={changeDescription}

@@ -23,7 +23,7 @@ function Connect({box, k}){
     return(
         <>
             {box.hasCon ? <div><ConMatch box={box} key={k}/></div>:
-                <div>{(box.to && box.id) ? <Line from={box.id} to={box.to} k={k}/>: ""}</div>
+                <div>{(box.to && box.id && box.to !== 'end') ? <Line from={box.id} to={box.to} k={k}/>: ""}</div>
             }
         </>  
     )

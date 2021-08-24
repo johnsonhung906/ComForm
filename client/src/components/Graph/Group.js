@@ -22,6 +22,10 @@ const useStyles = makeStyles(theme => ({
     fontSize:"300px",
     marginTop: "10px"
   },
+  button:{
+    top: "15px", 
+    marginLeft:"20px"
+  },
   resize:{
     fontSize:20
   },
@@ -29,7 +33,7 @@ const useStyles = makeStyles(theme => ({
 
 function Group(props){
     const classes = useStyles();
-    const {open, handleClose, boxes, setBoxes, idx} = props;
+    const {open, handleClose, boxes, setBoxes, idx, setStartid} = props;
     //has condition box or not
 
     const handleDeleteQues = (num) => {
@@ -78,7 +82,6 @@ function Group(props){
         setBoxes(new_boxes)
     }
 
-
     return(
     <Dialog fullWidth  maxWidth='lg' open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
         <DialogTitle id="dialog-title">
@@ -95,9 +98,17 @@ function Group(props){
                 }}
                 onChange={changeGroupTitle}
             />
+            <Button 
+                variant="outlined" 
+                onClick={() => setStartid(boxes[idx].id)}
+                className={classes.button}
+                color="secondary"
+                size="small"
+            >set to start problem</Button>
             <TextField 
                 id="standard-description" 
                 label="Group Description" 
+                multiline
                 value = {boxes[idx].description}
                 className={classes.description}
                 onChange={changeDescription}
@@ -106,13 +117,13 @@ function Group(props){
         <DialogContent style={{fontSize: 14}}>
         <br/>
         {boxes[idx].problems.map((question, number) => 
-        (<Question  number={number} 
-                    boxes={boxes} 
-                    setBoxes={setBoxes} 
-                    key={number} 
-                    handleDeleteQues={handleDeleteQues} 
-                    idx={idx}
-        />))}
+            (<Question  number={number} 
+                        boxes={boxes} 
+                        setBoxes={setBoxes} 
+                        key={number} 
+                        handleDeleteQues={handleDeleteQues} 
+                        idx={idx}
+            />))}
         <div style={{float: "left"}}>
             <Button onClick={handleAdd} color="primary">
                 <LibraryAddIcon color="primary"/>
@@ -137,6 +148,11 @@ function Group(props){
                             </div>
                         </MenuItem>
                     ))}   
+                    <MenuItem key={'to'+'-'+'end'} value={'end'}>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <div style={{ marginLeft:'10px'}}>end</div>
+                        </div>
+                    </MenuItem>
                 </Select>
             </div>
         }

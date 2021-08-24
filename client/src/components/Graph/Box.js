@@ -2,9 +2,9 @@ import React, {useState} from 'react'
 import Group from './Group';
 import { Rnd } from "react-rnd";
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
-import Norm from '../Norm';
+import Norm from '../../Norm';
 
-const style = {
+const style1 = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -13,9 +13,17 @@ const style = {
     backgroundColor: 'white'
 };
 
+const style2 = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    border: '3px solid orange',
+    borderRadius: '10%',
+    backgroundColor: 'white'
+};
+
 function Box(props){
-    const {left, top, idx, boxes, setBoxes, c_id} = props;
-    //const { height, width } = useWindowDimensions()
+    const {left, top, idx, boxes, setBoxes, c_id, startid, setStartid} = props;
     const [open, setOpen] = useState(false);
     const handleClose = () => {
         setOpen(false)
@@ -57,9 +65,9 @@ function Box(props){
 
     return(
     <>
-        <Group open={open} handleClose={handleClose} boxes={boxes} setBoxes={setBoxes} idx={idx}/>
+        <Group open={open} handleClose={handleClose} boxes={boxes} setBoxes={setBoxes} idx={idx} setStartid={setStartid}/>
         <Rnd
-            style={style}
+            style={startid === c_id? style2:style1}
             id={c_id}
             position={{ x: left, y: top}}
             size={{width: 150, height: 90}}

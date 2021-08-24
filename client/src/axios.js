@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_ROOT = "http://localhost:4000"
+const API_ROOT = "https://andyjjrt.ebg.tw"
 
 const instance = axios.create({
   baseURL: API_ROOT,

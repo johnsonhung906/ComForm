@@ -9,6 +9,7 @@ import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
+import instance from '../axios';
 
 function Copyright() {
   return (
@@ -90,6 +91,23 @@ const footers = [
 function MainPage() {
   const classes = useStyles();
 
+  const handleLogin = async googleData => {
+    // console.log(googleData)
+    // const user = {
+    //   _id: googleData.googleId,
+    //   name: googleData.profileObj.name,
+    //   picture: googleData.profileObj.imageUrl,
+    // }
+    const res = await instance.post('/api/google/redirect');
+    if(res.status === 200){
+      // localStorage.setItem('LOCALSTORAGE_USER', JSON.stringify(res.data));
+      // history.push("/home");
+    }
+    else{
+      console.log('error')
+    }
+  }
+
   return (
     <React.Fragment>
       <CssBaseline />
@@ -109,7 +127,7 @@ function MainPage() {
               Support
             </Link>
           </nav>
-          <Button href="/signin" color="primary" variant="outlined" className={classes.link}>
+          <Button color="primary" variant="outlined" className={classes.link} onClick={handleLogin}>
             Login
           </Button>
         </Toolbar>

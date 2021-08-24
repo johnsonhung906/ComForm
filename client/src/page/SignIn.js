@@ -12,7 +12,8 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import GoogleLogin from 'react-google-login';
+import GoogleButton from 'react-google-button';
+import { useHistory } from "react-router-dom";
 import instance from '../axios';
 
 function Copyright() {
@@ -48,26 +49,29 @@ const useStyles = makeStyles((theme) => ({
   },
   gsubmit: {
     margin: theme.spacing(0, 0, 1),
-    width: '100%',
     height: '41px',
+    backgroundColor: 'white'
   }
 }));
 
 function SignIn() {
   const classes = useStyles();
+  let history = useHistory();
   const handleLogin = async googleData => {
-    console.log(googleData)
-    // const res = await fetch("/api/v1/auth/google", {
-    //     method: "POST",
-    //     body: JSON.stringify({
-    //     token: googleData.tokenId
-    //   }),
-    //   headers: {
-    //     "Content-Type": "application/json"
-    //   }
-    // })
-    // const data = await res.json()
-    // store returned user somehow
+    // console.log(googleData)
+    // const user = {
+    //   _id: googleData.googleId,
+    //   name: googleData.profileObj.name,
+    //   picture: googleData.profileObj.imageUrl,
+    // }
+    const res = await instance.post('/api/google/redirect');
+    if(res.status === 200){
+      // localStorage.setItem('LOCALSTORAGE_USER', JSON.stringify(res.data));
+      history.push("/home");
+    }
+    else{
+      console.log('error')
+    }
   }
 
   return (
@@ -128,13 +132,10 @@ function SignIn() {
           >
             Sign In
           </Button>
-          <GoogleLogin
-            clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-            buttonText="&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Log in with Google"
-            onSuccess={handleLogin}
-            onFailure={handleLogin}
-            cookiePolicy={'single_host_origin'}
+          <GoogleButton
+            // startIcon={<GoogleIcon />}
             className={classes.gsubmit}
+            onClick={handleLogin}
           />
         </form>
       </div>
